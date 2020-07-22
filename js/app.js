@@ -1,8 +1,47 @@
 //Constructor para calcular el seguro
-function Seguros(marca, anio, tipo) {
+function Seguro(marca, anio, tipo) {
     this.marca = marca;
     this.anio = anio;
     this.tipo = tipo;
+
+}
+Seguro.prototype.cotizarSeguro = function(){
+    /*
+    Valores sobre los que se multiplica según el tipo de seguro
+    1 = americano 1.15
+    2 = asiático 1.05
+    3 = europeo 1.45
+    */
+
+    let cantidad;
+    const base = 2000; //Base que se sugiere en el video
+
+    switch(this.marca){
+        case '1':
+            cantidad = base * 1.15;
+            break;
+        case '2':
+            cantidad = base * 1.05;
+            break;
+        case '3':
+            cantidad = base * 1.45;
+            break;
+    }
+    
+    //Como leer el anio
+    const diferencia = new Date().getFullYear()- this.anio;
+    //Por cada anio de diferencia hay que reducir un 3% el valor del seguro
+    cantidad -= ((diferencia * 3)* cantidad) / 100;
+    /*
+    Si el seguro es básico se multiplica por 30% más
+    Si el seguro es completo se multiplica por 50% más
+    */
+    if (this.tipo === 'basico'){
+        cantidad *= 1.30;
+    }else{
+        cantidad *= 1.50;
+    }
+    return cantidad.toFixed(2);
 
 }
 
@@ -14,17 +53,17 @@ Interfaz.prototype.mostrarError = function (mensaje, tipo) {
     const div = document.createElement('div');
 
     if (tipo === 'error') {
-        div.classList = 'error';
+        div.classList.add('mensaje','error');
     } else {
-        div.classList = 'correcto';
+        div.classList.add('mensaje','correcto');
     }
     div.innerHTML = `${mensaje}`;
     formulario.insertBefore(div, document.querySelector('.form-group')
     );
 
     setTimeout(function () {
-
-    }, 3000);
+        document.querySelector('.mensaje').remove();
+    }, 2000);
 
 }
 
@@ -55,7 +94,13 @@ formulario.addEventListener('submit', function (e) {
         interfaz.mostrarError('Faltan datos, debe revisar el formulario y probar de nuevo', 'error');
     } else {
         //Instanciar seguro y mostrar interfaz
-        console.log('Funciona bien');
+        const seguro = new Seguro(marcaSeleccionada, anioSeleccionado, tipo);
+
+        //Cotizar el seguro
+        const cantidad = seguro.cotizarSeguro(seguro);
+
+        //console.log(seguro);
+        //console.log('Funciona bien');
     }
 
     /*console.log(tipo);
@@ -76,4 +121,3 @@ for (let i = max; i > min; i--) { // es así para que aparezca del 2020 para aba
     option.innerHTML = i;
     selectAnios.appendChild(option);
 }
-git 
