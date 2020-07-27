@@ -67,6 +67,43 @@ Interfaz.prototype.mostrarError = function (mensaje, tipo) {
 
 }
 
+//Muestra el resultado de la cotización
+Interfaz.prototype.mostrarResultado = function(seguro, cantidad){
+    const resultado = document.getElementById('resultado');
+
+    let marca;
+
+    switch(seguro.marca){
+        case '1':
+            marca = 'Americano';
+            break;
+        case '2':
+            marca = 'Asiatico';
+            break;
+        case '3':
+            marca = 'Europeo';
+            break;
+    }
+    //Crear un div como cartel
+    const div = document.createElement('div');
+    //Insertar información
+    div.innerHTML = `
+        <p class= 'header'> Tu Seguro: </p>
+        <p> Marca: ${marca}</p>
+        <p> Año: ${seguro.anio}</p>
+        <p> Tipo: ${seguro.tipo}</p>
+        <p> Total: ${cantidad}</p>
+    `;
+
+    let spinner = document.querySelector('#cargando img');
+    spinner.style.display = 'block';
+    setTimeout(function(){
+        //Para que luego de los 2 segundos se oculte el spinner y aparezca el resultado
+        spinner.style.display = 'none';
+        resultado.appendChild(div);
+    },2000);
+}
+
 //EventListener
 
 const formulario = document.getElementById('cotizar-seguro');
@@ -93,13 +130,21 @@ formulario.addEventListener('submit', function (e) {
         //Interfaz imprimiendo un error
         interfaz.mostrarError('Faltan datos, debe revisar el formulario y probar de nuevo', 'error');
     } else {
+        //Limpiar formulario de resultados anteriores
+        const resultados = document.querySelector('#resultado div');
+
+        if (resultados != null){
+            resultados.remove();
+        }
         //Instanciar seguro y mostrar interfaz
         const seguro = new Seguro(marcaSeleccionada, anioSeleccionado, tipo);
 
         //Cotizar el seguro
         const cantidad = seguro.cotizarSeguro(seguro);
 
-        //console.log(seguro);
+        //Mostrar el resultado
+        interfaz.mostrarResultado(seguro, cantidad);
+        //console.log(cantidad);
         //console.log('Funciona bien');
     }
 
